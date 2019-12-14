@@ -4,7 +4,8 @@
 # calculate centre of masses. This program assumes that you have two different
 # residues A and B. The user gets to decide what A and B should be. The output
 # is a print of the centre of mass arrays of A and B, along with an 
-# interactive 3D plot of the same.
+# interactive 3D plot of the same. Also, the centres of masses of each of the 
+# residues will be saved as separate .txt files.
 
 # Importing required packages
 import numpy as np
@@ -31,6 +32,7 @@ def formatter():
 	os.system("sed -i -e 's/.\{5\}/& /'  test_1.gro") 
 	os.system("tr -s ' ' < test_1.gro | tr ' ' ',' > test_1.csv")
 	os.system("mv test_1.csv " + output_file)
+	os.system("rm test_1.gro")
 
 
 # Mass inputs
@@ -40,15 +42,16 @@ def mass_handler(mol_frame):
 	mol_size = total_size / mol_num
 	atom_types = mol_frame[:mol_size, 2]
 	atomic_mass_list = []
+	print "Enter the atomic masses of atoms in residue ", str(mol_frame[0, 1]), " :"
+	print "---------------------------------------------------------"
 	for x in atom_types:
-		y = float(raw_input("Enter the mass of atom " + x + " : "))
+		y = float(raw_input("Mass of atom " + x + " : "))
 		atomic_mass_list.append(y)
+	print "---------------------------------------------------------"
 	atomic_mass_array = np.array(atomic_mass_list)
 	total_mass = np.sum(atomic_mass_array)
 	atomic_mass_array_full = np.tile(atomic_mass_array, mol_num)
 	atomic_mass_array_full = atomic_mass_array_full.reshape((len(atomic_mass_array_full), 1))
-	print mol_frame.shape
-	print atomic_mass_array_full.shape
 	mol_with_mass = np.hstack((mol_frame, atomic_mass_array_full))
 	return mol_with_mass, mol_size, total_mass, mol_num
 
@@ -75,13 +78,10 @@ def mass_xyz(mol_with_mass, total_mass, num, mol_size):
 	while counter <= num:
 		a = np.sum(mass_only[((counter-1)*mol_size):(counter*mol_size), 1]) / total_mass
 		com_list_x.append(a)
-		#print a
 		b = np.sum(mass_only[((counter-1)*mol_size):(counter*mol_size), 2]) / total_mass
 		com_list_y.append(b)
-		#print b
 		c = np.sum(mass_only[((counter-1)*mol_size):(counter*mol_size), 3]) / total_mass
 		com_list_z.append(c)
-		#print c
 		counter += 1	
 	com_list_x = np.array(com_list_x)
 	com_list_y = np.array(com_list_y)
@@ -92,11 +92,13 @@ def mass_xyz(mol_with_mass, total_mass, num, mol_size):
 
 
 formatter()
-frame = np.genfromtxt("1.csv", delimiter=',', dtype=str)
 
+frame = np.genfromtxt("1.csv", delimiter=',', dtype=str)
 frame = frame[:, 1:8]
+
 A = raw_input("Enter the label of residue A: ")
 B = raw_input("Enter the label of residue B: ")
+
 A_frame = frame[frame[:, 1] == str(A)]
 B_frame = frame[frame[:, 1] == str(B)]
 
@@ -108,12 +110,15 @@ B_with_mass, B_size, B_total_mass, B_num = mass_handler(B_frame)
 A_com = mass_xyz(A_with_mass, A_total_mass, A_num, A_size)
 B_com = mass_xyz(B_with_mass, B_total_mass, B_num, B_size)
 
-print "Centres of mass of ", str(A), " :\n"
+print "\nCentres of mass of ", str(A), " :\n"
 print A_com
 print "\n------------------------\n"
 print "Centres of mass of ", str(B), " :\n"
 print B_com
 print "\n------------------------\n"
+
+np.savetxt(str(A)+".txt", A_com[:, 2:].astype(float), fmt='%.8f   %.8f   %.8f')
+np.savetxt(str(B)+".txt", A_com[:, 2:].astype(float), fmt='%.8f   %.8f   %.8f')
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
