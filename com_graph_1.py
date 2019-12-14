@@ -18,7 +18,6 @@ from mpl_toolkits.mplot3d import Axes3D
 def formatter():
 	my_file = raw_input("Enter the input file: ")
 	os.system("cp " + my_file + " test_1.gro")
-	output_file = raw_input("Enter the ouput file name with a .csv extension (other than \"test_1.csv\"): ")
 	print "Chopping heads >>>>>"
 	os.system("sed -i 1,2d test_1.gro")
 	print "Chopping tails >>>>>"
@@ -31,7 +30,6 @@ def formatter():
 	os.system("sed -i -e 's/.\{15\}/& /'  test_1.gro")
 	os.system("sed -i -e 's/.\{5\}/& /'  test_1.gro") 
 	os.system("tr -s ' ' < test_1.gro | tr ' ' ',' > test_1.csv")
-	os.system("mv test_1.csv " + output_file)
 	os.system("rm test_1.gro")
 
 
@@ -93,7 +91,7 @@ def mass_xyz(mol_with_mass, total_mass, num, mol_size):
 
 formatter()
 
-frame = np.genfromtxt("1.csv", delimiter=',', dtype=str)
+frame = np.genfromtxt("test_1.csv", delimiter=',', dtype=str)
 frame = frame[:, 1:8]
 
 A = raw_input("Enter the label of residue A: ")
@@ -129,6 +127,7 @@ B_proxy = ax.scatter([], [], [], c='b', marker='o')
 ax.legend([A_proxy, B_proxy], [str(A), str(B)], numpoints=1)
 plt.show()
 
+os.system("rm test_1.csv")
 print "\n-------------- Exited -----------------\n"
 
 
