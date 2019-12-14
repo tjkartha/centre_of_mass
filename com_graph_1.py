@@ -122,8 +122,11 @@ np.savetxt(str(B)+".txt", A_com[:, 2:].astype(float), fmt='%.8f   %.8f   %.8f')
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(A_com[:, 2].astype(float), A_com[:, 3].astype(float), A_com[:, 4].astype(float), c='r', marker='o')
-ax.scatter(B_com[:, 2].astype(float), B_com[:, 3].astype(float), B_com[:, 4].astype(float), c='b', marker='o')
+A_plot = ax.scatter(A_com[:, 2].astype(float), A_com[:, 3].astype(float), A_com[:, 4].astype(float), c='r', marker='o')
+B_plot = ax.scatter(B_com[:, 2].astype(float), B_com[:, 3].astype(float), B_com[:, 4].astype(float), c='b', marker='o')
+A_proxy = ax.scatter([], [], [], c='r', marker='o')
+B_proxy = ax.scatter([], [], [], c='b', marker='o')
+ax.legend([A_proxy, B_proxy], [str(A), str(B)], numpoints=1)
 plt.show()
 
 print "\n-------------- Exited -----------------\n"
