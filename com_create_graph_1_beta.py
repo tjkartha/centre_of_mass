@@ -67,12 +67,15 @@ def mass_xyz(mol_with_mass, total_mass, num, mol_size):
 
 
 ## Import .csv into a NumPy array
-frame = np.genfromtxt("1.csv", delimiter=',', dtype=str)
+input_file = raw_input("Enter the input file with extension (.csv format): ")
+frame = np.genfromtxt(input_file, delimiter=',', dtype=str)
 
 # Silce and dice the array to get what you want
 frame = frame[:, 1:8]
-tfs_frame = frame[frame[:, 1] == 'TFS']
-otf_frame = frame[frame[:, 1] == 'OTF']
+molecule_label_1 = raw_input("Enter label of molecule 1: ")
+tfs_frame = frame[frame[:, 1] == molecule_label_1]
+molecule_label_2 = raw_input("Enter label of molecule 2: ")
+otf_frame = frame[frame[:, 1] == molecule_label_2]
 
 tfs_num = 0
 otf_num = 0
