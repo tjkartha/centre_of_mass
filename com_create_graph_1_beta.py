@@ -1,4 +1,6 @@
-## This program calculates the centre of mass of molecules in a MD system and plos it in 3D space.
+## Developer: Thejus R. Kartha
+## github.com/tjkartha
+## This program calculates the centre of mass of molecules in a MD system and plots it in 3D space.
 ## The assumed input is a .csv version of a .gro file.
 ## You can use the single_frame programme in the formatters_only repository to get the .csv file.
 
@@ -8,7 +10,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 
-## Finding the specifics of teh molecule: its size, total mass, etc.
+## Finding the specifics of teh molecule: number of atoms in the molecule, total mass, etc.
 def mass_handler(mol_frame):
 	total_size = int(len(mol_frame))
 	mol_num = int(mol_frame[-1, 0]) - int(mol_frame[0, 0]) + 1
@@ -67,12 +69,15 @@ def mass_xyz(mol_with_mass, total_mass, num, mol_size):
 
 
 ## Import .csv into a NumPy array
-frame = np.genfromtxt("1.csv", delimiter=',', dtype=str)
+input_file = raw_input("Enter the input file (complete with the .csv extension): ")
+frame = np.genfromtxt(input_file, delimiter=',', dtype=str)
 
 # Silce and dice the array to get what you want
 frame = frame[:, 1:8]
-tfs_frame = frame[frame[:, 1] == 'TFS']
-otf_frame = frame[frame[:, 1] == 'OTF']
+molecule_1 = raw_input("Enter the residue label of molecule 1: ")
+molecule_2 = raw_input("Enter the residue label of molecule 2: ")
+tfs_frame = frame[frame[:, 1] == molecule_1]	## tfs and otf are used as variables since this code was initially developed for TFSI and OTF anions.
+otf_frame = frame[frame[:, 1] == molecule_2]
 
 tfs_num = 0
 otf_num = 0
@@ -82,9 +87,9 @@ otf_with_mass, otf_size, otf_total_mass, otf_num = mass_handler(otf_frame)
 tfs_com = mass_xyz(tfs_with_mass, tfs_total_mass, tfs_num, tfs_size)
 otf_com = mass_xyz(otf_with_mass, otf_total_mass, otf_num, otf_size)
 
-print tfs_com
+print "Centre of Mass of ", molecule_1, '\n', tfs_com
 print "\n------------------------\n"
-print otf_com
+print "Centre of Mass of ", molecule_2, '\n', otf_com
 
 # Plot centre of masses in 3D space
 fig = plt.figure()
