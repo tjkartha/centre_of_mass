@@ -1,8 +1,14 @@
+## This program calculates the centre of mass of molecules in a MD system and plos it in 3D space.
+## The assumed input is a .csv version of a .gro file.
+## You can use the single_frame programme in the formatters_only repository to get the .csv file.
+
+## Importing packages
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 
+## Finding the specifics of teh molecule: its size, total mass, etc.
 def mass_handler(mol_frame):
 	total_size = int(len(mol_frame))
 	mol_num = int(mol_frame[-1, 0]) - int(mol_frame[0, 0]) + 1
@@ -22,6 +28,7 @@ def mass_handler(mol_frame):
 	return mol_with_mass, mol_size, total_mass, mol_num
 
 
+## Calculating the centre of mass of the molecule
 def mass_xyz(mol_with_mass, total_mass, num, mol_size):
 	mass_x = []
 	mass_y = []
@@ -59,11 +66,16 @@ def mass_xyz(mol_with_mass, total_mass, num, mol_size):
 	return mol_com
 
 
-frame = np.genfromtxt("1.csv", delimiter=',', dtype=str)
+## Import .csv into a NumPy array
+input_file = raw_input("Enter the input file with extension (.csv format): ")
+frame = np.genfromtxt(input_file, delimiter=',', dtype=str)
 
+# Silce and dice the array to get what you want
 frame = frame[:, 1:8]
-tfs_frame = frame[frame[:, 1] == 'TFS']
-otf_frame = frame[frame[:, 1] == 'OTF']
+molecule_label_1 = raw_input("Enter label of molecule 1: ")
+tfs_frame = frame[frame[:, 1] == molecule_label_1]
+molecule_label_2 = raw_input("Enter label of molecule 2: ")
+otf_frame = frame[frame[:, 1] == molecule_label_2]
 
 tfs_num = 0
 otf_num = 0
@@ -77,6 +89,7 @@ print tfs_com
 print "\n------------------------\n"
 print otf_com
 
+# Plot centre of masses in 3D space
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(tfs_com[:, 2].astype(float), tfs_com[:, 3].astype(float), tfs_com[:, 4].astype(float), c='r', marker='o')
